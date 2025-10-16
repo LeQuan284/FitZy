@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng nhập / Đăng ký / Thoát</title>
+  <style>
+    /* === MENU === */
+    #nav-menu {
+      background-color: #4CAF50;
+      padding: 10px 40px;
+    }
+
+    #nav-menu ul {
+      list-style: none;
+      display: flex;
+      gap: 25px;
+      margin: 0;
+      padding: 0;
+      align-items: center;
+    }
+
+    #nav-menu a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+      cursor: pointer;
+    }
+
+    #nav-menu a:hover {
+      color: #ffeb3b;
+    }
+
+    #welcome {
+      color: white;
+      font-weight: 600;
+    }
+
+    /* === POPUP FORM === */
+    .popup {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .popup-content {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      width: 300px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      position: relative;
+    }
+
+    .popup-content h2 {
+      margin-bottom: 15px;
+      color: #4CAF50;
+    }
+
+    .popup-content input {
+      width: 90%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .popup-content button {
+      width: 100%;
+      padding: 10px;
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .popup-content button:hover {
+      background-color: #45a049;
+    }
+
+    .close {
+      position: absolute;
+      right: 15px;
+      top: 10px;
+      font-size: 24px;
+      cursor: pointer;
+      color: #333;
+    }
+
+    .logout-btn {
+      background: #fff;
+      color: #4CAF50;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .logout-btn:hover {
+      background-color: #45a049;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <nav id="nav-menu">
+    <ul>
+      <li><a href="#home">Trang chủ</a></li>
+      <li><a href="indexthucdon.html">Đặt hàng</a></li>
+      <li><a href="menu.html">Thực đơn</a></li>
+      <li><a href="tintuc.html">Tin tức</a></li>
+      <li><a id="openRegister">Đăng ký</a></li>
+      <li><a id="openLogin">Đăng nhập</a></li>
+      <li id="welcome"></li>
+      <li><a id="logoutBtn" class="logout-btn" style="display:none;">Thoát</a></li>
+    </ul>
+  </nav>
+
+  <!-- Popup Đăng nhập -->
+  <div id="loginPopup" class="popup">
+    <div class="popup-content">
+      <span class="close" onclick="closePopup('loginPopup')">&times;</span>
+      <h2>Đăng nhập</h2>
+      <input id="loginUser" type="text" placeholder="Tên đăng nhập">
+      <input id="loginPass" type="password" placeholder="Mật khẩu">
+      <button onclick="login()">Đăng nhập</button>
+    </div>
+  </div>
+
+  <!-- Popup Đăng ký -->
+  <div id="registerPopup" class="popup">
+    <div class="popup-content">
+      <span class="close" onclick="closePopup('registerPopup')">&times;</span>
+      <h2>Đăng ký</h2>
+      <input id="regUser" type="text" placeholder="Tên đăng nhập">
+      <input id="regEmail" type="email" placeholder="Email">
+      <input id="regPass" type="password" placeholder="Mật khẩu">
+      <button onclick="register()">Đăng ký</button>
+    </div>
+  </div>
+
+  <script>
+    // ===== MỞ POPUP =====
+    document.getElementById("openLogin").onclick = () =>
+      document.getElementById("loginPopup").style.display = "flex";
+
+    document.getElementById("openRegister").onclick = () =>
+      document.getElementById("registerPopup").style.display = "flex";
+
+    function closePopup(id) {
+      document.getElementById(id).style.display = "none";
+    }
+
+    window.onclick = function(e) {
+      if (e.target.classList.contains('popup')) e.target.style.display = "none";
+    }
+
+    // ===== ĐĂNG KÝ =====
+    function register() {
+      const user = document.getElementById("regUser").value.trim();
+      const email = document.getElementById("regEmail").value.trim();
+      const pass = document.getElementById("regPass").value.trim();
+
+      if (!user || !email || !pass) {
+        alert("Vui lòng nhập đầy đủ thông tin!");
+        return;
+      }
+
+      let users = JSON.parse(localStorage.getItem("users")) || [];
+
+      if (users.find(u => u.user === user)) {
+        alert("Tên đăng nhập đã tồn tại!");
+        return;
+      }
+
+      users.push({ user, email, pass });
+      localStorage.setItem("users", JSON.stringify(users));
+
+      alert("Đăng ký thành công! Hãy đăng nhập.");
+      closePopup("registerPopup");
+    }
+
+    // ===== ĐĂNG NHẬP =====
+    function login() {
+      const user = document.getElementById("loginUser").value.trim();
+      const pass = document.getElementById("loginPass").value.trim();
+
+      let users = JSON.parse(localStorage.getItem("users")) || [];
+      let found = users.find(u => u.user === user && u.pass === pass);
+
+      if (found) {
+        localStorage.setItem("currentUser", user);
+        showWelcome();
+        closePopup("loginPopup");
+      } else {
+        alert("Sai tên đăng nhập hoặc mật khẩu!");
+      }
+    }
+
+    // ===== HIỂN THỊ CHÀO MỪNG =====
+    function showWelcome() {
+      const user = localStorage.getItem("currentUser");
+      const welcome = document.getElementById("welcome");
+      const logoutBtn = document.getElementById("logoutBtn");
+
+      if (user) {
+        welcome.innerHTML = `Xin chào, ${user}!`;
+        document.getElementById("openLogin").style.display = "none";
+        document.getElementById("openRegister").style.display = "none";
+        logoutBtn.style.display = "inline-block";
+      } else {
+        welcome.innerHTML = "";
+        document.getElementById("openLogin").style.display = "inline";
+        document.getElementById("openRegister").style.display = "inline";
+        logoutBtn.style.display = "none";
+      }
+    }
+
+    // ===== NÚT "THOÁT" =====
+    document.getElementById("logoutBtn").onclick = () => {
+      localStorage.removeItem("currentUser");
+      alert("Bạn đã thoát tài khoản!");
+      showWelcome();
+    };
+
+    // ===== GIỮ TRẠNG THÁI KHI TẢI LẠI TRANG =====
+    window.onload = showWelcome;
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitZy – Good Food - Good Mood</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- FontAwesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<!-- Header -->
+<header>
+<a href="index.html" class="logo">
+  <img src="icons/my.jpg" alt="FitZy Logo">
+  FitZy
+</a>
+
+  <div class="menu-toggle" id="menu-toggle">☰</div>
+
+   <nav id="nav-menu">
+    <ul>
+      <li><a href="#home">Trang chủ</a></li>
+      <li><a href="indexthucdon.html">Đặt hàng</a></li>
+      <li><a href="menu.html">Thực đơn</a></li>
+      <li><a href="tintuc.html">Tin tức</a></li>
+      <li><a id="openRegister">Đăng ký</a></li>
+      <li><a id="openLogin">Đăng nhập</a></li>
+      <li id="welcome"></li>
+      <li><a id="logoutBtn" class="logout-btn" style="display:none;">Thoát</a></li>
+    </ul>
+  </nav>
+  
+  <!-- Popup Đăng nhập -->
+  <div id="loginPopup" class="popup">
+    <div class="popup-content">
+      <span class="close" onclick="closePopup('loginPopup')">&times;</span>
+      <h2>Đăng nhập</h2>
+      <input id="loginUser" type="text" placeholder="Tên đăng nhập">
+      <input id="loginPass" type="password" placeholder="Mật khẩu">
+      <button onclick="login()">Đăng nhập</button>
+    </div>
+  </div>
+
+  <!-- Popup Đăng ký -->
+  <div id="registerPopup" class="popup">
+    <div class="popup-content">
+      <span class="close" onclick="closePopup('registerPopup')">&times;</span>
+      <h2>Đăng ký</h2>
+      <input id="regUser" type="text" placeholder="Tên đăng nhập">
+      <input id="regEmail" type="email" placeholder="Email">
+      <input id="regPass" type="password" placeholder="Mật khẩu">
+      <button onclick="register()">Đăng ký</button>
+    </div>
+  </div>
+  <script>
+document.addEventListener("DOMContentLoaded", () => {
+  const openLogin = document.getElementById("openLogin");
+  const openRegister = document.getElementById("openRegister");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const welcome = document.getElementById("welcome");
+
+  // ===== MỞ POPUP =====
+  openLogin.onclick = () => document.getElementById("loginPopup").style.display = "flex";
+  openRegister.onclick = () => document.getElementById("registerPopup").style.display = "flex";
+
+  function closePopup(id) {
+    document.getElementById(id).style.display = "none";
+  }
+
+  window.onclick = function(e) {
+    if (e.target.classList.contains('popup')) e.target.style.display = "none";
+  }
+
+  // ===== ĐĂNG KÝ =====
+  function register() {
+    const user = document.getElementById("regUser").value.trim();
+    const email = document.getElementById("regEmail").value.trim();
+    const pass = document.getElementById("regPass").value.trim();
+
+    if (!user || !email || !pass) {
+      alert("Vui lòng nhập đầy đủ thông tin!");
+      return;
+    }
+
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+
+    if (users.find(u => u.user === user)) {
+      alert("Tên đăng nhập đã tồn tại!");
+      return;
+    }
+
+    users.push({ user, email, pass });
+    localStorage.setItem("users", JSON.stringify(users));
+
+    alert("Đăng ký thành công! Hãy đăng nhập.");
+    closePopup("registerPopup");
+  }
+
+  // ===== ĐĂNG NHẬP =====
+  function login() {
+    const user = document.getElementById("loginUser").value.trim();
+    const pass = document.getElementById("loginPass").value.trim();
+
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+    let found = users.find(u => u.user === user && u.pass === pass);
+
+    if (found) {
+      localStorage.setItem("currentUser", user);
+      closePopup("loginPopup");
+      showWelcome(); // ✅ Cập nhật ngay sau đăng nhập
+    } else {
+      alert("Sai tên đăng nhập hoặc mật khẩu!");
+    }
+  }
+
+  // ===== HIỂN THỊ CHÀO MỪNG =====
+  function showWelcome() {
+    const user = localStorage.getItem("currentUser");
+
+    if (user) {
+      welcome.innerHTML = `Xin chào, ${user}!`;
+      openLogin.style.display = "none";
+      openRegister.style.display = "none";
+      logoutBtn.style.display = "inline-block";
+    } else {
+      welcome.innerHTML = "";
+      openLogin.style.display = "inline";
+      openRegister.style.display = "inline";
+      logoutBtn.style.display = "none";
+    }
+  }
+
+  // ===== NÚT "THOÁT" =====
+  logoutBtn.onclick = () => {
+    localStorage.removeItem("currentUser");
+    alert("Bạn đã thoát tài khoản!");
+    showWelcome();
+  };
+
+  // ===== GIỮ TRẠNG THÁI KHI TẢI LẠI TRANG =====
+  showWelcome();
+  
+  // Gán các hàm để có thể gọi từ HTML
+  window.closePopup = closePopup;
+  window.login = login;
+  window.register = register;
+});
+</script>
+
+
+  <!-- Icon giỏ hàng -->
+  <div class="cart-icon" id="cart-btn">
+    <img src="icons/giohang.png" alt="Cart">
+    <span class="cart-count" id="cart-count">0</span>
+  </div>
+</header>
+
+<!-- Thanh trượt giỏ hàng -->
+<div class="cart-sidebar" id="cart-sidebar">
+  <div class="cart-header">
+    <h2>Giỏ hàng</h2>
+    <span class="close-cart" id="close-cart">&times;</span>
+  </div>
+  <div class="cart-items" id="cart-items"></div>
+  <div class="cart-footer">
+    <p>Tổng tiền: <span id="cart-total">0₫</span></p>
+    <button id="checkout-btn" class="checkout-btn">Thanh toán</button>
+  </div>
+</div>
+
+<!-- Overlay làm mờ nền -->
+<div class="cart-overlay" id="cart-overlay"></div>
+
+
+
+
+
+  <!-- Banner -->
+<section class="banner" id="home">
+  <div class="slides">
+    
+    <!-- Slide 1 -->
+    <div class="slide active">
+      <img src="thuymy1.png" alt="Thực đơn ăn sạch sống khỏe">
+      <div class="banner-content">
+        <h1>Good Food-Good Mood</h1>
+        <div class="buttons">
+          <button onclick="window.location.href='indexthucdon.html'">Đặt ngay</button>
+          <button class="secondary" onclick="window.location.href='tintuc.html'">Tư vấn</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 2 -->
+    <div class="slide">
+      <img src="thuymy2.png" alt="Bữa ăn dinh dưỡng">
+      <div class="banner-content">
+        <h1>Good Food-Good Mood</h1>
+        <div class="buttons">
+          <button onclick="window.location.href='indexthucdon.html'">Đặt ngay</button>
+          <button class="secondary" onclick="window.location.href='tintuc.html'">Tư vấn</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 3 -->
+    <div class="slide">
+      <img src="thuymy3.png" alt="Sinh tố trái cây">
+      <div class="banner-content">
+        <h1>Good Food-Good Mood</h1>
+        <div class="buttons">
+          <button onclick="window.location.href='indexthucdon.html'">Đặt ngay</button>
+          <button class="secondary" onclick="window.location.href='tintuc.html'">Tư vấn</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 4 -->
+    <div class="slide">
+      <img src="thuymy4.png" alt="Rau củ quả sạch">
+      <div class="banner-content">
+        <h1>Good Food-Good Mood</h1>
+        <div class="buttons">
+          <button onclick="window.location.href='indexthucdon.html'">Đặt ngay</button>
+          <button class="secondary" onclick="window.location.href='tintuc.html'">Tư vấn</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+  <!-- Chấm điều hướng -->
+  <div class="dots">
+    <span class="dot active" data-index="0"></span>
+    <span class="dot" data-index="1"></span>
+    <span class="dot" data-index="2"></span>
+    <span class="dot" data-index="3"></span>
+  </div>
+
+  <!-- About Section -->
+<section class="about">
+  <div class="about-image"></div>
+
+  <div class="about-content">
+    <h2>FITZY VIETNAM</h2>
+    <div class="underline"></div>
+    <p>
+      FitZy được định vị là thương hiệu cung cấp bữa ăn Eat Clean tiện lợi, 
+      với dịch vụ giao hàng nhanh chóng, linh hoạt theo gói hàng tuần/tháng cùng trải nghiệm đa dạng hoá lựa chọn, 
+      phù hợp với phong cách sống năng động của Gen Z và dân văn phòng tại Đà Nẵng..
+    </p>
+    <p>
+      FitZy giúp khách hàng duy trì chế độ ăn khoa học – ngon miệng – tiết kiệm thời gian 
+      mà vẫn đảm bảo dinh dưỡng và năng lượng tích cực mỗi ngày. 
+    </p>
+  </div>
+</section>
+  <!-- About Section -->
+   <section class="menu-section">
+  <h2>CÁCH ĐẶT HÀNG</h2>
+  
+
+  <div class="order-steps">
+    <div class="step">
+      <img src="icons/file.png" alt="Đặt hàng-Xác nhận">
+      <h3>Đặt hàng-Xác nhận</h3>
+      <p>Khách bắt đầu quy trình bằng cách đặt hàng FitZy Meal Plan- Đơn hàng được xác nhận để đảm bảo tính chính xác và tính khả thi</p>
+    </div>
+
+    <div class="step">
+      <img src="icons/cook.png" alt="Chuẩn bị">
+      <h3>Chuẩn bị</h3>
+      <p>Các bữa ăn được chuẩn bị và đóng gói để giao hàng.</p>
+    </div>
+
+    <div class="step">
+      <img src="icons/delivery.png" alt="Giao hàng">
+      <h3>Giao hàng</h3>
+      <p>các bữa ăn được giao đến địa chỉ của khách hàng.</p>
+    </div>
+
+    <div class="step">
+      <img src="icons/file.png" alt="Hoàn tất">
+      <h3>Hoàn tất</h3>
+      <p>Đơn hàng được hoàn tất và khách hàng nhận được bữa ăn của họ</p>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- Products -->
+<section id="menu" class="menu-section">
+  <h2>Thực đơn nổi bật</h2>
+  <div class="menu-grid">
+    <div class="menu-item">
+      <img src="thuymy5.png" alt="Cơm cá hồi">
+      <h3>Cơm cá hồi</h3>
+      <p>75.000₫</p>
+      <button class="add-to-cart" 
+              data-name="Cơm cá hồi" 
+              data-price="75000" 
+              data-image="images/ganuong.png">
+        Thêm vào giỏ
+      </button>
+    </div>
+
+    <div class="menu-item">
+      <img src="thuymy6.jpg" alt="Cơm gà nướng">
+      <h3>Cơm gà nướng</h3>
+      <p>75.000₫</p>
+      <button class="add-to-cart" 
+              data-name="Salad gà nướng" 
+              data-price="75000"
+              data-image="images/ganuong.png">
+        Thêm vào giỏ
+      </button>
+    </div>
+
+    <div class="menu-item">
+      <img src="thuymy7.jpg" alt="Cơm thịt xíu">
+      <h3>Salad rau củ quả</h3>
+      <p>55.000₫</p>
+      <button class="add-to-cart" 
+              data-name="Cơm thịt xíu" 
+              data-price="55000"
+              data-image="images/ganuong.png">
+        Thêm vào giỏ
+      </button>
+    </div>
+
+    <div class="menu-item">
+      <img src="thuymy8.jpg" alt="Nui trộn">
+      <h3>Salad cá ngừ</h3>
+      <p>80.000₫</p>
+      <button class="add-to-cart" 
+              data-name="Nui trộn" 
+              data-price="80000"
+              data-image="images/ganuong.png">
+        Thêm vào giỏ
+      </button>
+    </div>
+
+    <div class="menu-item">
+      <img src="thuymy9.jpg" alt="Nui hầm">
+      <h3>Salad trái cây</h3>
+      <p>60.000₫</p>
+      <button class="add-to-cart" 
+              data-name="Nui hầm" 
+              data-price="60000"
+              data-image="images/ganuong.png">
+        Thêm vào giỏ
+      </button>
+    </div>
+
+    <div class="menu-item">
+      <img src="thuymy10.jpg" alt="Salad trộn">
+      <h3>Salad tôm</h3>
+      <p>85.000₫</p>
+      <button class="add-to-cart" 
+              data-name="Salad trộn" 
+              data-price="85000"
+              data-image="images/ganuong.png">
+        Thêm vào giỏ
+      </button>
+    </div>
+
+    <div class="menu-item">
+      <img src="thuymy11.jpg" alt="Salad ức gà">
+      <h3>Salad trứng</h3>
+      <p>65.000₫</p>
+      <button class="add-to-cart" 
+              data-name="Salad ức gà" 
+              data-price="65000"
+              data-image="images/ganuong.png">
+        Thêm vào giỏ
+      </button>
+    </div>
+
+    <div class="menu-item">
+      <img src="thuymy12.jpg" alt="Mỳ Ý sốt cà chua & đậu lăng">
+      <h3>Salad bơ đậu</h3>
+      <p>70.000₫</p>
+      <button class="add-to-cart" 
+              data-name="Mỳ Ý sốt cà chua & đậu lăng" 
+              data-price="70000"
+              data-image="images/ganuong.png">
+        Thêm vào giỏ
+      </button>
+    </div>
+  </div>
+</section>
+
+    <!-- Charity Section -->
+<section class="menu-section">
+  <h2>HOẠT ĐỘNG THIỆN NGUYỆN</h2>
+
+  <div class="charity-steps">
+    <div class="charity-step">
+      <img src="images/salad.png" alt="Gây quỹ">
+      <p>Chúng tôi tổ chức các chương trình gây quỹ giúp đỡ người có hoàn cảnh khó khăn.</p>
+    </div>
+
+    <div class="charity-step">
+      <img src="images/salad.png" alt="Chuẩn bị">
+      <p>Đội ngũ thiện nguyện chuẩn bị từng phần quà và bữa ăn với tình yêu thương.</p>
+    </div>
+
+    <div class="charity-step">
+      <img src="images/salad.png" alt="Trao tặng">
+      <p>Những món quà được trao tận tay người cần giúp đỡ trên khắp địa bàn.</p>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- <script src="cart.js"></script>
+<script>
+  // Gán sự kiện "Thêm vào giỏ" cho tất cả nút
+  document.querySelectorAll(".add-to-cart").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const name = btn.dataset.name;
+      const price = parseInt(btn.dataset.price);
+      const image = btn.dataset.image;
+      addToCart(name, price, image);
+    });
+  });
+</script> -->
+  <!-- Testimonials -->
+  <section class="testimonials" id="reviews">
+    <h2>Khách hàng nói gì</h2>
+    <div class="reviews" id="review-slider">
+      <div class="review active">
+        <img src="images/customer1.png" alt="Customer 1">
+        <p>"Đồ ăn rất ngon, tươi và giao hàng nhanh chóng!"</p>
+        <span>- Lan Anh</span>
+      </div>
+      <div class="review">
+        <img src="images/customer1.png" alt="Customer 2">
+        <p>"FitZy giúp mình tiết kiệm thời gian mà vẫn ăn uống lành mạnh."</p>
+        <span>- Minh Quân</span>
+      </div>
+      <div class="review">
+        <img src="images/customer1.png" alt="Customer 3">
+        <p>"Menu đa dạng, giá hợp lý, mình sẽ ủng hộ lâu dài."</p>
+        <span>- Hồng Nhung</span>
+      </div>
+    </div>
+    <div class="carousel-controls">
+      <button id="prev">◀</button>
+      <button id="next">▶</button>
+    </div>
+  </section>
+ 
+
+  <section class="partners-section">
+  <h2>ĐỐI TÁC & KHÁCH HÀNG</h2>
+  <p class="partners-desc">
+    FitZy tự hào được đồng hành cùng nhiều đối tác và khách hàng tin cậy trên hành trình lan tỏa lối sống lành mạnh.
+  </p>
+
+  <div class="partners-container">
+    <!-- Đối tác -->
+    <div class="partners-column">
+      <h3>ĐỐI TÁC</h3>
+      <div class="logo-grid">
+        <img src="logos/mega.png" alt="Đối tác 1">
+        <img src="logos/nongpro.png" alt="Đối tác 2">
+        
+      </div>
+    </div>
+
+    <!-- Khách hàng -->
+    <div class="partners-column">
+      <h3>KHÁCH HÀNG</h3>
+      <div class="logo-grid">
+        <img src="logos/thecity.png" alt="Khách hàng 1">
+        <img src="logos/ryla.png" alt="Khách hàng 2">
+       
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  <!-- Footer -->
+ <footer class="footer">
+  <div class="footer-container">
+    
+    <!-- Cột 1: Thông tin công ty -->
+    <div class="footer-col">
+      <h3>CÔNG TY TNHH FITZY</h3>
+      <p><strong>Địa chỉ:</strong> 245 Lê Thanh Nghị- Hải Châu- TP.Đà Nẵng</p>
+      <p><strong>Điện thoại:</strong> (+84) 542986426 [hotline]</p>
+      <p><strong>Email:</strong> info@fitzy.vn <br> For business inquiries: business@fitzy.vn</p>
+      <p><strong>MST:</strong> 0313272749 do Sở Kế hoạch và Đầu tư Đà Nẵng cấp ngày 26/11/2025</p>
+    </div>
+
+    <!-- Cột 2: Điều khoản -->
+    <div class="footer-col">
+      <h3>ĐIỀU KHOẢN CHUNG</h3>
+      <ul>
+        <li><a href="#">Chính Sách Quy Định Chung</a></li>
+        <li><a href="#">Quy Định Hình Thức Thanh Toán</a></li>
+        <li><a href="#">Chính Sách Vận Chuyển Giao Hàng</a></li>
+        <li><a href="#">Chính Sách Bảo Mật Thông Tin</a></li>
+      </ul>
+    </div>
+
+    <!-- Cột 3: Mạng xã hội -->
+    <div class="footer-col">
+      <h3>THEO DÕI CHÚNG TÔI TẠI</h3>
+      <div class="socials">
+        <a href="#"><i class="fab fa-facebook"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-youtube"></i></a>
+      </div>
+      <img src="images/bct.png" alt="Đã thông báo Bộ Công Thương" class="gov-badge">
+    </div>
+  </div>
+
+  <!-- Thanh tìm kiếm -->
+  <div class="footer-search">
+    <input type="text" placeholder="Tìm kiếm">
+    <button><i class="fas fa-search"></i></button>
+  </div>
+</footer>
+<!-- Nút nổi tin nhắn -->
+<div class="chat-widget">
+  <div class="chat-toggle">
+    <i class="fas fa-comments"></i>
+  </div>
+  <div class="chat-options">
+    <a href="https://m.me/fitfood" target="_blank" class="chat-btn messenger">
+      <i class="fab fa-facebook-messenger"></i> Messenger
+    </a>
+    <a href="https://zalo.me/0815215375" target="_blank" class="chat-btn zalo">
+      <img src="icons/zalo.png" alt="Zalo Icon"> Zalo
+    </a>
+  </div>
+</div>
+
+
+<script>
+const toggle = document.querySelector(".chat-toggle");
+const options = document.querySelector(".chat-options");
+
+toggle.addEventListener("click", () => {
+  const isVisible = options.style.display === "flex";
+  options.style.display = isVisible ? "none" : "flex";
+});
+</script>
+
+
+  <script src="script.js"></script>
+  <script src="cart.js"></script>
+</body>
+</html>

@@ -1,0 +1,199 @@
+body {
+  font-family: "Poppins", sans-serif;
+  background: #f7f7f7;
+  color: #222;
+  margin: 0;
+  padding: 0;
+}
+
+.menu-section {
+  max-width: 1000px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 12px;
+  padding: 40px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+h1 {
+  text-align: left;
+  font-size: 2.2rem;
+  letter-spacing: 1px;
+  position: relative;
+  display: inline-block;
+}
+
+h1::after {
+  content: "";
+  position: absolute;
+  width: 60px;
+  height: 4px;
+  background-color: #e52531;
+  bottom: -8px;
+  left: 0;
+  border-radius: 2px;
+}
+
+.desc {
+  color: #666;
+  line-height: 1.6;
+  margin-top: 20px;
+}
+
+.week-selector {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 40px 0 20px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.week-selector .order-btn {
+  background: #e52531 !important;
+  color: #fff !important;
+  padding: 10px 22px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.week-selector .order-btn:hover {
+  background: #c91e29 !important;
+  color: #fff !important;
+}
+
+.week-selector button {
+  background: none;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.week-selector button:hover {
+  color: #e52531;
+}
+
+.week-range {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.order-btn {
+  background: #e52531;
+  color: #fff;
+  padding: 10px 22px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.order-btn:hover {
+  background: #c91e29;
+}
+
+.menu-header {
+  display: flex;
+  text-align: center;
+  font-weight: 700;
+  color: #fff;
+}
+
+.day-col {
+  background: #e52531;
+  flex: 1;
+  padding: 14px;
+}
+
+.meal-col {
+  background: #000;
+  flex: 2;
+  padding: 14px;
+}
+
+.menu-row {
+  display: flex;
+  background: #fafafa;
+  border-bottom: 1px solid #ddd;
+}
+
+.menu-row:nth-child(odd) {
+  background: #fff;
+}
+
+.day-cell {
+  flex: 1;
+  background: #e52531;
+  color: #fff;
+  text-align: center;
+  padding: 20px 0;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  margin: 15px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.meal-cell {
+  flex: 2;
+  padding: 20px;
+  text-align: center;
+  border-left: 1px solid #eee;
+}
+
+.meal-title {
+  font-weight: 700;
+  color: #111;
+}
+
+.meal-sub {
+  color: #666;
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+
+.kcal {
+  color: #e52531;
+  font-size: 0.85rem;
+  margin-top: 6px;
+}
+
+.new-label {
+  background: #e52531;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
+}
+
+.fade {
+  opacity: 1;
+  transition: opacity 0.5s ease;
+}
+
+.fade.hidden {
+  opacity: 0;
+}
+
+@media (max-width: 768px) {
+  .menu-header, .menu-row {
+    flex-direction: column;
+  }
+  .meal-cell {
+    border-left: none;
+    border-top: 1px solid #eee;
+  }
+  .day-cell {
+    border-radius: 8px;
+    width: auto;
+  }
+}

@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitFood – Ăn lành sống khỏe</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="checkout.css">
+  <link rel="stylesheet" href="tintuc.css">
+  <!-- FontAwesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <div class="logo">
+    <img src="icons/my.jpg" alt="FitFood Logo">
+    FitFood
+  </div>
+
+  <div class="menu-toggle" id="menu-toggle">☰</div>
+
+ <nav id="nav-menu">
+    <ul>
+      <li><a href="#home">Trang chủ</a></li>
+      <li><a href="indexthucdon.html">Đặt hàng</a></li>
+      <li><a href="menu.html">Thực đơn</a></li>
+      <li><a href="tintuc.html">Tin tức</a></li>
+      <li><a id="openRegister">Đăng ký</a></li>
+      <li><a id="openLogin">Đăng nhập</a></li>
+      <li id="welcome"></li>
+      <li><a id="logoutBtn" class="logout-btn" style="display:none;">Thoát</a></li>
+    </ul>
+  </nav>
+  
+  <!-- Popup Đăng nhập -->
+  <div id="loginPopup" class="popup">
+    <div class="popup-content">
+      <span class="close" onclick="closePopup('loginPopup')">&times;</span>
+      <h2>Đăng nhập</h2>
+      <input id="loginUser" type="text" placeholder="Tên đăng nhập">
+      <input id="loginPass" type="password" placeholder="Mật khẩu">
+      <button onclick="login()">Đăng nhập</button>
+    </div>
+  </div>
+
+  <!-- Popup Đăng ký -->
+  <div id="registerPopup" class="popup">
+    <div class="popup-content">
+      <span class="close" onclick="closePopup('registerPopup')">&times;</span>
+      <h2>Đăng ký</h2>
+      <input id="regUser" type="text" placeholder="Tên đăng nhập">
+      <input id="regEmail" type="email" placeholder="Email">
+      <input id="regPass" type="password" placeholder="Mật khẩu">
+      <button onclick="register()">Đăng ký</button>
+    </div>
+  </div>
+  <script>
+document.addEventListener("DOMContentLoaded", () => {
+  const openLogin = document.getElementById("openLogin");
+  const openRegister = document.getElementById("openRegister");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const welcome = document.getElementById("welcome");
+
+  // ===== MỞ POPUP =====
+  openLogin.onclick = () => document.getElementById("loginPopup").style.display = "flex";
+  openRegister.onclick = () => document.getElementById("registerPopup").style.display = "flex";
+
+  function closePopup(id) {
+    document.getElementById(id).style.display = "none";
+  }
+
+  window.onclick = function(e) {
+    if (e.target.classList.contains('popup')) e.target.style.display = "none";
+  }
+
+  // ===== ĐĂNG KÝ =====
+  function register() {
+    const user = document.getElementById("regUser").value.trim();
+    const email = document.getElementById("regEmail").value.trim();
+    const pass = document.getElementById("regPass").value.trim();
+
+    if (!user || !email || !pass) {
+      alert("Vui lòng nhập đầy đủ thông tin!");
+      return;
+    }
+
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+
+    if (users.find(u => u.user === user)) {
+      alert("Tên đăng nhập đã tồn tại!");
+      return;
+    }
+
+    users.push({ user, email, pass });
+    localStorage.setItem("users", JSON.stringify(users));
+
+    alert("Đăng ký thành công! Hãy đăng nhập.");
+    closePopup("registerPopup");
+  }
+
+  // ===== ĐĂNG NHẬP =====
+  function login() {
+    const user = document.getElementById("loginUser").value.trim();
+    const pass = document.getElementById("loginPass").value.trim();
+
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+    let found = users.find(u => u.user === user && u.pass === pass);
+
+    if (found) {
+      localStorage.setItem("currentUser", user);
+      closePopup("loginPopup");
+      showWelcome(); // ✅ Cập nhật ngay sau đăng nhập
+    } else {
+      alert("Sai tên đăng nhập hoặc mật khẩu!");
+    }
+  }
+
+  // ===== HIỂN THỊ CHÀO MỪNG =====
+  function showWelcome() {
+    const user = localStorage.getItem("currentUser");
+
+    if (user) {
+      welcome.innerHTML = `Xin chào, ${user}!`;
+      openLogin.style.display = "none";
+      openRegister.style.display = "none";
+      logoutBtn.style.display = "inline-block";
+    } else {
+      welcome.innerHTML = "";
+      openLogin.style.display = "inline";
+      openRegister.style.display = "inline";
+      logoutBtn.style.display = "none";
+    }
+  }
+
+  // ===== NÚT "THOÁT" =====
+  logoutBtn.onclick = () => {
+    localStorage.removeItem("currentUser");
+    alert("Bạn đã thoát tài khoản!");
+    showWelcome();
+  };
+
+  // ===== GIỮ TRẠNG THÁI KHI TẢI LẠI TRANG =====
+  showWelcome();
+  
+  // Gán các hàm để có thể gọi từ HTML
+  window.closePopup = closePopup;
+  window.login = login;
+  window.register = register;
+});
+</script>
+
+  <!-- Icon giỏ hàng -->
+  <div class="cart-icon" id="cart-btn">
+    <img src="icons/giohang.png" alt="Cart">
+    <span class="cart-count" id="cart-count">0</span>
+  </div>
+</header>
+
+<!-- Thanh trượt giỏ hàng -->
+<div class="cart-sidebar" id="cart-sidebar">
+  <div class="cart-header">
+    <h2>Giỏ hàng</h2>
+    <span class="close-cart" id="close-cart">&times;</span>
+  </div>
+  <div class="cart-items" id="cart-items"></div>
+  <div class="cart-footer">
+    <p>Tổng tiền: <span id="cart-total">0₫</span></p>
+   <button id="checkout-btn" class="checkout-btn">Thanh toán</button>
+  </div>
+</div>
+
+<!-- Overlay làm mờ nền -->
+<div class="cart-overlay" id="cart-overlay"></div>
+
+
+<h1>TIN TỨC</h1>
+
+  <div class="categories">
+    <button class="category-btn" data-category="all">Tất cả</button>
+    <button class="category-btn" data-category="Nấu ăn">Nấu ăn</button>
+    <button class="category-btn" data-category="Sự kiện">Sự kiện</button>
+    <button class="category-btn" data-category="Khuyến mãi">Khuyến mãi</button>
+    <button class="category-btn" data-category="Thông báo">Thông báo</button>
+    <button class="category-btn" data-category="Thực đơn">Thực đơn</button>
+    <button class="category-btn" data-category="Bài tập">Bài tập</button>
+    <button class="category-btn" data-category="Giảm cân">Giảm cân</button>
+    <button class="category-btn" data-category="Chế độ ăn">Chế độ ăn</button>
+    <div class="search-bar">
+      <input type="text" placeholder="Tìm kiếm" id="searchInput">
+    </div>
+  </div>
+
+  <div class="news-grid" id="newsGrid">
+    <div class="news-item" data-category="Giảm cân">
+      <img src="images/salad.png" alt="">
+      <div class="news-content">
+        <div class="category">Giảm cân</div>
+        <h3>ĐI BỘ CÓ GIẢM CÂN KHÔNG?</h3>
+        <div class="date">14/10/2025</div>
+        <p>Liệu hoạt động đơn giản này có giúp bạn giảm cân hay không? Cách đi bộ thế nào mới giảm calo, giảm cân hiệu quả?</p>
+      </div>
+    </div>
+
+    <div class="news-item" data-category="Chế độ ăn">
+      <img src="images/banner1.png" alt="">
+      <div class="news-content">
+        <div class="category">Chế độ ăn</div>
+        <h3>ĂN NGŨ CỐC GIẢM CÂN CÓ HIỆU QUẢ KHÔNG?</h3>
+        <div class="date">14/10/2025</div>
+        <p>Ngũ cốc giảm cân là phương pháp được sử dụng trong nhiều chế độ ăn hiện nay...</p>
+      </div>
+    </div>
+
+    <!-- 🥣 NẤU ĂN -->
+<div class="news-item" data-category="Nấu ăn">
+  <img src="images/thuymy25.png" alt="">
+  <div class="news-content">
+    <div class="category">Nấu ăn</div>
+    <h3>5 MÓN ĂN SÁNG GIÚP NO LÂU MÀ KHÔNG TĂNG CÂN</h3>
+    <div class="date">10/10/2025</div>
+    <p>Khởi đầu ngày mới bằng những món ăn nhẹ nhưng đủ dinh dưỡng giúp bạn duy trì năng lượng cả buổi sáng.</p>
+  </div>
+</div>
+
+<div class="news-item" data-category="Nấu ăn">
+  <img src="images/banner3.png" alt="">
+  <div class="news-content">
+    <div class="category">Nấu ăn</div>
+    <h3>BÍ QUYẾT LUỘC RAU XANH MƯỚT VÀ GIỮ TRỌN DINH DƯỠNG</h3>
+    <div class="date">09/10/2025</div>
+    <p>Mẹo nhỏ giúp rau củ giữ được màu xanh bắt mắt mà không mất vitamin khi chế biến.</p>
+  </div>
+</div>
+<!-- 📰 Mục tin bài -->
+<div class="news-item" data-category="Bài tập" onclick="showVideo()">
+  <img src="images/banner4.png" alt="">
+  <div class="news-content">
+    <div class="category">Bài tập</div>
+    <h3>10 PHÚT YOGA BUỔI SÁNG GIÚP TINH THẦN SẢNG KHOÁI</h3>
+    <div class="date">08/10/2025</div>
+    <p>Chỉ với 10 phút yoga mỗi sáng, bạn có thể cải thiện tuần hoàn máu và giảm căng thẳng hiệu quả.</p>
+  </div>
+</div>
+
+<!-- 🎬 Popup video -->
+<div id="video-popup" class="video-popup">
+  <div class="video-container">
+    <span class="close-btn" onclick="closeVideo()">&times;</span>
+    <video id="popup-video" controls>
+      <source src="videos/yoga.mp4" type="video/mp4">
+      Trình duyệt của bạn không hỗ trợ video.
+    </video>
+  </div>
+</div>
+
+<style>
+/* ==== POPUP VIDEO ==== */
+.video-popup {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease;
+}
+
+/* Hiệu ứng mờ dần khi xuất hiện */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Hộp video */
+.video-container {
+  position: relative;
+  width: 45%;
+  aspect-ratio: 16/9;
+  max-width: 500px;
+  background: #000;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+  transform: scale(0.8);
+  opacity: 0;
+  animation: zoomIn 0.4s ease forwards;
+}
+
+/* Hiệu ứng zoom in khi mở */
+@keyframes zoomIn {
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Nút đóng */
+.close-btn {
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  font-size: 22px;
+  color: #fff;
+  cursor: pointer;
+  transition: 0.2s;
+  z-index: 10;
+}
+
+.close-btn:hover {
+  color: #e52531;
+}
+
+/* Video */
+.video-container video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+/* Giao diện responsive */
+@media (max-width: 768px) {
+  .video-container {
+    width: 85%;
+    max-width: 350px;
+  }
+}
+</style>
+
+<script>
+function showVideo() {
+  const popup = document.getElementById('video-popup');
+  const video = document.getElementById('popup-video');
+  popup.style.display = 'flex';
+  video.play();
+}
+
+function closeVideo() {
+  const popup = document.getElementById('video-popup');
+  const video = document.getElementById('popup-video');
+
+  // Hiệu ứng tắt mượt
+  popup.style.animation = 'fadeOut 0.3s ease forwards';
+  setTimeout(() => {
+    popup.style.display = 'none';
+    popup.style.animation = ''; // reset
+  }, 300);
+
+  video.pause();
+  video.currentTime = 0;
+}
+
+/* Hiệu ứng mờ khi tắt popup */
+const style = document.createElement('style');
+style.textContent = `
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}`;
+document.head.appendChild(style);
+</script>
+
+
+<div class="news-item" data-category="Bài tập">
+  <img src="images/banner4.png" alt="">
+  <div class="news-content">
+    <div class="category">Bài tập</div>
+    <h3>CHẠY BỘ HAY ĐI XE ĐẠP: HOẠT ĐỘNG NÀO TỐT HƠN?</h3>
+    <div class="date">07/10/2025</div>
+    <p>Cùng tìm hiểu ưu và nhược điểm của hai bài tập phổ biến giúp bạn chọn cách luyện tập phù hợp nhất.</p>
+  </div>
+</div>
+
+<!-- 🥗 CHẾ ĐỘ ĂN -->
+<div class="news-item" data-category="Chế độ ăn">
+  <img src="images/banner2.png" alt="">
+  <div class="news-content">
+    <div class="category">Chế độ ăn</div>
+    <h3>ĂN NGŨ CỐC GIẢM CÂN CÓ HIỆU QUẢ KHÔNG?</h3>
+    <div class="date">14/10/2025</div>
+    <p>Ngũ cốc giảm cân là phương pháp được sử dụng trong nhiều chế độ ăn hiện nay...</p>
+  </div>
+</div>
+
+<div class="news-item" data-category="Chế độ ăn">
+  <img src="images/banner3.png" alt="">
+  <div class="news-content">
+    <div class="category">Chế độ ăn</div>
+    <h3>THỰC ĐƠN 7 NGÀY THANH LỌC CƠ THỂ</h3>
+    <div class="date">11/10/2025</div>
+    <p>Gợi ý thực đơn cân bằng dinh dưỡng giúp cơ thể nhẹ nhàng, da dẻ tươi tắn chỉ sau một tuần.</p>
+  </div>
+</div>
+
+<!-- 🎉 SỰ KIỆN -->
+<div class="news-item" data-category="Sự kiện">
+  <img src="images/thuymy27.png" alt="">
+  <div class="news-content">
+    <div class="category">Sự kiện</div>
+    <h3>FITFOOD RA MẮT GÓI ĂN MỚI “NĂNG LƯỢNG XANH”</h3>
+    <div class="date">05/10/2025</div>
+    <p>Tham dự sự kiện ra mắt gói ăn giàu chất xơ và năng lượng thực vật dành cho dân văn phòng.</p>
+  </div>
+</div>
+
+<div class="news-item" data-category="Sự kiện">
+  <img src="images/salad.png" alt="">
+  <div class="news-content">
+    <div class="category">Sự kiện</div>
+    <h3>WORKSHOP “ĂN UỐNG THÔNG MINH – SỐNG KHỎE MỖI NGÀY”</h3>
+    <div class="date">03/10/2025</div>
+    <p>Buổi chia sẻ từ chuyên gia dinh dưỡng giúp bạn hiểu rõ hơn về cách kết hợp thực phẩm lành mạnh.</p>
+  </div>
+</div>
+
+<!-- 💸 KHUYẾN MÃI -->
+<div class="news-item" data-category="Khuyến mãi">
+  <img src="images/thuymy28.png" alt="">
+  <div class="news-content">
+    <div class="category">Khuyến mãi</div>
+    <h3>GIẢM 20% CHO KHÁCH HÀNG MỚI TRONG THÁNG 10</h3>
+    <div class="date">01/10/2025</div>
+    <p>Đặt gói ăn FitFood ngay hôm nay để nhận ưu đãi hấp dẫn dành riêng cho khách hàng mới!</p>
+  </div>
+</div>
+
+<div class="news-item" data-category="Khuyến mãi">
+  <img src="images/banner4.png" alt="">
+  <div class="news-content">
+    <div class="category">Khuyến mãi</div>
+    <h3>MUA 5 TẶNG 1 – CHƯƠNG TRÌNH ƯU ĐÃI HẤP DẪN</h3>
+    <div class="date">28/09/2025</div>
+    <p>Áp dụng cho các đơn hàng gói ăn tuần hoặc tháng, đặt ngay để nhận thêm bữa ăn miễn phí!</p>
+  </div>
+</div>
+
+<!-- 📢 THÔNG BÁO -->
+<div class="news-item" data-category="Thông báo">
+  <img src="images/banner4.png" alt="">
+  <div class="news-content">
+    <div class="category">Thông báo</div>
+    <h3>LỊCH NGHỈ LỄ 20/10 VÀ GIAO HÀNG SAU KỲ NGHỈ</h3>
+    <div class="date">25/09/2025</div>
+    <p>FitFood xin thông báo lịch nghỉ lễ và thời gian giao hàng trở lại cho quý khách hàng thân thiết.</p>
+  </div>
+</div>
+
+<div class="news-item" data-category="Thông báo">
+  <img src="images/thuymy24.png" alt="">
+  <div class="news-content">
+    <div class="category">Thông báo</div>
+    <h3>FITFOOD CẬP NHẬT GIAO DIỆN WEBSITE MỚI</h3>
+    <div class="date">22/09/2025</div>
+    <p>Trải nghiệm mua sắm tiện lợi và dễ dàng hơn với giao diện mới thân thiện của FitFood!</p>
+  </div>
+</div>
+
+
+    <div class="news-item" data-category="Giảm cân">
+      <img src="images/banner2.png" alt="">
+      <div class="news-content">
+        <div class="category">Giảm cân</div>
+        <h3>6 CÔNG THỨC DETOX GIẢM CÂN TẠI VĂN PHÒNG</h3>
+        <div class="date">14/10/2025</div>
+        <p>Đã lâu bạn chưa biết cách detox giảm cân hiệu quả? Thử ngay bài viết này!</p>
+      </div>
+    </div>
+
+    <div class="news-item" data-category="Chế độ ăn">
+      <img src="images/thuymy22.png" alt="">
+      <div class="news-content">
+        <div class="category">Chế độ ăn</div>
+        <h3>9 MẸO GIÚP BẠN TĂNG CƯỜNG DINH DƯỠNG</h3>
+        <div class="date">13/10/2025</div>
+        <p>Các mẹo đơn giản để cải thiện sức khỏe và dinh dưỡng hàng ngày...</p>
+      </div>
+    </div>
+
+    <div class="news-item" data-category="Thực đơn">
+      <img src="images/thuymy26.png" alt="">
+      <div class="news-content">
+        <div class="category">Thực đơn</div>
+        <h3>CÁCH ĂN BÁNH TRUNG THU KHÔNG TĂNG CÂN</h3>
+        <div class="date">12/10/2025</div>
+        <p>Một số gợi ý để thưởng thức bánh trung thu mà vẫn giữ dáng...</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="pagination" id="pagination">
+    <button id="prevBtn">Trước</button>
+    <button id="nextBtn">Sau</button>
+  </div>
+
+  <script>
+    const newsItems = document.querySelectorAll('.news-item');
+    const newsGrid = document.getElementById('newsGrid');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const categoryButtons = document.querySelectorAll('.category-btn');
+    const itemsPerPage = 3;
+    let currentPage = 1;
+    let currentCategory = 'all';
+
+   function displayItems() {
+  const searchText = document.getElementById('searchInput').value.toLowerCase();
+
+  // Lọc các tin phù hợp theo danh mục và tìm kiếm
+  const visibleItems = Array.from(newsItems).filter(item => {
+    const matchesCategory = currentCategory === 'all' || item.dataset.category === currentCategory;
+    const matchesSearch = item.textContent.toLowerCase().includes(searchText);
+    return matchesCategory && matchesSearch;
+  });
+
+  // Ẩn tất cả tin trước
+  newsItems.forEach(item => (item.style.display = 'none'));
+
+  // Tính giới hạn trang
+  const start = (currentPage - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+
+  // Hiển thị các tin trong khoảng trang hiện tại
+  visibleItems.slice(start, end).forEach(item => (item.style.display = 'flex'));
+
+  // Cập nhật phân trang
+  prevBtn.disabled = currentPage === 1;
+  nextBtn.disabled = currentPage >= Math.ceil(visibleItems.length / itemsPerPage) || visibleItems.length === 0;
+}
+
+
+    function updatePagination() {
+  const searchText = document.getElementById('searchInput').value.toLowerCase();
+  const visibleItems = Array.from(newsItems).filter(item => {
+    const matchesCategory = currentCategory === 'all' || item.dataset.category === currentCategory;
+    const matchesSearch = item.textContent.toLowerCase().includes(searchText);
+    return matchesCategory && matchesSearch;
+  });
+  prevBtn.disabled = currentPage === 1;
+  nextBtn.disabled = currentPage >= Math.ceil(visibleItems.length / itemsPerPage);
+}
+
+    prevBtn.addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage--;
+        displayItems();
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      const visibleItems = Array.from(newsItems).filter(item => 
+        (currentCategory === 'all' || item.dataset.category === currentCategory) && 
+        item.textContent.toLowerCase().includes(document.getElementById('searchInput').value.toLowerCase())
+      );
+      if (currentPage < Math.ceil(visibleItems.length / itemsPerPage)) {
+        currentPage++;
+        displayItems();
+      }
+    });
+
+    categoryButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        categoryButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        currentCategory = button.dataset.category;
+        currentPage = 1;
+        displayItems();
+      });
+    });
+
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+      currentPage = 1;
+      displayItems();
+    });
+
+    displayItems();
+  </script>
+
+
+
+
+
+
+  <!-- Footer -->
+ <footer class="footer">
+  <div class="footer-container">
+    
+    <!-- Cột 1: Thông tin công ty -->
+    <div class="footer-col">
+      <h3>CÔNG TY TNHH FITZY</h3>
+      <p><strong>Địa chỉ:</strong> 33 Đường 14, KDC Bình Hưng, Ấp 2, Huyện Bình Chánh, TPHCM</p>
+      <p><strong>Điện thoại:</strong> (+84) 932 788 120 [hotline]</p>
+      <p><strong>Email:</strong> info@fitfood.vn <br> For business inquiries: business@fitfood.vn</p>
+      <p><strong>MST:</strong> 0313272749 do Sở Kế hoạch và Đầu tư TPHCM cấp ngày 26/05/2015</p>
+    </div>
+
+    <!-- Cột 2: Điều khoản -->
+    <div class="footer-col">
+      <h3>ĐIỀU KHOẢN CHUNG</h3>
+      <ul>
+        <li><a href="https://www.facebook.com/share/17VrRNrhgK/?mibextid=wwXIfr">Chính Sách Quy Định Chung</a></li>
+        <li><a href="#">Quy Định Hình Thức Thanh Toán</a></li>
+        <li><a href="#">Chính Sách Vận Chuyển Giao Hàng</a></li>
+        <li><a href="#">Chính Sách Bảo Mật Thông Tin</a></li>
+      </ul>
+    </div>
+
+    <!-- Cột 3: Mạng xã hội -->
+    <div class="footer-col">
+      <h3>THEO DÕI CHÚNG TÔI TẠI</h3>
+      <div class="socials">
+        <a href="#"><i class="fab fa-facebook"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-youtube"></i></a>
+      </div>
+      <img src="images/bct.png" alt="Đã thông báo Bộ Công Thương" class="gov-badge">
+    </div>
+  </div>
+
+  <!-- Thanh tìm kiếm -->
+  <div class="footer-search">
+    <input type="text" placeholder="Tìm kiếm">
+    <button><i class="fas fa-search"></i></button>
+  </div>
+</footer>
+
+<!-- Nút nổi tin nhắn -->
+<div class="chat-widget">
+  <div class="chat-toggle">
+    <i class="fas fa-comments"></i>
+  </div>
+  <div class="chat-options">
+    <a href="https://m.me/fitfood" target="_blank" class="chat-btn messenger">
+      <i class="fab fa-facebook-messenger"></i> Messenger
+    </a>
+    <a href="https://zalo.me/0815215375" target="_blank" class="chat-btn zalo">
+      <img src="icons/zalo.png" alt="Zalo Icon"> Zalo
+    </a>
+  </div>
+</div>
+
+
+<script>
+const toggle = document.querySelector(".chat-toggle");
+const options = document.querySelector(".chat-options");
+
+toggle.addEventListener("click", () => {
+  const isVisible = options.style.display === "flex";
+  options.style.display = isVisible ? "none" : "flex";
+});
+</script>
+
+  <script src="script.js"></script>
+  <script src="cart.js"></script>
+</body>
+</html>

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitZy – Good Food- Good Mood</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="checkout.css">
+  <!-- FontAwesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <div class="logo">
+    <img src="icons/my.jpg" alt="FitZy Logo">
+    FitZy
+  </div>
+
+  <div class="menu-toggle" id="menu-toggle">☰</div>
+
+  <nav id="nav-menu">
+    <ul>
+      <li><a href="#home">Trang chủ</a></li>
+      <li><a href="indexthucdon.html">Đặt hàng</a></li>
+      <li><a href="menu.html">Thực đơn</a></li>
+      <li><a href="tintuc.html">Tin tức</a></li>
+      <li><a id="openRegister">Đăng ký</a></li>
+      <li><a id="openLogin">Đăng nhập</a></li>
+      <li id="welcome"></li>
+      <li><a id="logoutBtn" class="logout-btn" style="display:none;">Thoát</a></li>
+    </ul>
+  </nav>
+  
+  <!-- Popup Đăng nhập -->
+  <div id="loginPopup" class="popup">
+    <div class="popup-content">
+      <span class="close" onclick="closePopup('loginPopup')">&times;</span>
+      <h2>Đăng nhập</h2>
+      <input id="loginUser" type="text" placeholder="Tên đăng nhập">
+      <input id="loginPass" type="password" placeholder="Mật khẩu">
+      <button onclick="login()">Đăng nhập</button>
+    </div>
+  </div>
+
+  <!-- Popup Đăng ký -->
+  <div id="registerPopup" class="popup">
+    <div class="popup-content">
+      <span class="close" onclick="closePopup('registerPopup')">&times;</span>
+      <h2>Đăng ký</h2>
+      <input id="regUser" type="text" placeholder="Tên đăng nhập">
+      <input id="regEmail" type="email" placeholder="Email">
+      <input id="regPass" type="password" placeholder="Mật khẩu">
+      <button onclick="register()">Đăng ký</button>
+    </div>
+  </div>
+  <script>
+document.addEventListener("DOMContentLoaded", () => {
+  const openLogin = document.getElementById("openLogin");
+  const openRegister = document.getElementById("openRegister");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const welcome = document.getElementById("welcome");
+
+  // ===== MỞ POPUP =====
+  openLogin.onclick = () => document.getElementById("loginPopup").style.display = "flex";
+  openRegister.onclick = () => document.getElementById("registerPopup").style.display = "flex";
+
+  function closePopup(id) {
+    document.getElementById(id).style.display = "none";
+  }
+
+  window.onclick = function(e) {
+    if (e.target.classList.contains('popup')) e.target.style.display = "none";
+  }
+
+  // ===== ĐĂNG KÝ =====
+  function register() {
+    const user = document.getElementById("regUser").value.trim();
+    const email = document.getElementById("regEmail").value.trim();
+    const pass = document.getElementById("regPass").value.trim();
+
+    if (!user || !email || !pass) {
+      alert("Vui lòng nhập đầy đủ thông tin!");
+      return;
+    }
+
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+
+    if (users.find(u => u.user === user)) {
+      alert("Tên đăng nhập đã tồn tại!");
+      return;
+    }
+
+    users.push({ user, email, pass });
+    localStorage.setItem("users", JSON.stringify(users));
+
+    alert("Đăng ký thành công! Hãy đăng nhập.");
+    closePopup("registerPopup");
+  }
+
+  // ===== ĐĂNG NHẬP =====
+  function login() {
+    const user = document.getElementById("loginUser").value.trim();
+    const pass = document.getElementById("loginPass").value.trim();
+
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+    let found = users.find(u => u.user === user && u.pass === pass);
+
+    if (found) {
+      localStorage.setItem("currentUser", user);
+      closePopup("loginPopup");
+      showWelcome(); // ✅ Cập nhật ngay sau đăng nhập
+    } else {
+      alert("Sai tên đăng nhập hoặc mật khẩu!");
+    }
+  }
+
+  // ===== HIỂN THỊ CHÀO MỪNG =====
+  function showWelcome() {
+    const user = localStorage.getItem("currentUser");
+
+    if (user) {
+      welcome.innerHTML = `Xin chào, ${user}!`;
+      openLogin.style.display = "none";
+      openRegister.style.display = "none";
+      logoutBtn.style.display = "inline-block";
+    } else {
+      welcome.innerHTML = "";
+      openLogin.style.display = "inline";
+      openRegister.style.display = "inline";
+      logoutBtn.style.display = "none";
+    }
+  }
+
+  // ===== NÚT "THOÁT" =====
+  logoutBtn.onclick = () => {
+    localStorage.removeItem("currentUser");
+    alert("Bạn đã thoát tài khoản!");
+    showWelcome();
+  };
+
+  // ===== GIỮ TRẠNG THÁI KHI TẢI LẠI TRANG =====
+  showWelcome();
+  
+  // Gán các hàm để có thể gọi từ HTML
+  window.closePopup = closePopup;
+  window.login = login;
+  window.register = register;
+});
+</script>
+
+  <!-- Icon giỏ hàng -->
+  <div class="cart-icon" id="cart-btn">
+    <img src="icons/giohang.png" alt="Cart">
+    <span class="cart-count" id="cart-count">0</span>
+  </div>
+</header>
+
+<!-- Thanh trượt giỏ hàng -->
+<div class="cart-sidebar" id="cart-sidebar">
+  <div class="cart-header">
+    <h2>Giỏ hàng</h2>
+    <span class="close-cart" id="close-cart">&times;</span>
+  </div>
+  <div class="cart-items" id="cart-items"></div>
+  <div class="cart-footer">
+    <p>Tổng tiền: <span id="cart-total">0₫</span></p>
+   <button id="checkout-btn" class="checkout-btn">Thanh toán</button>
+  </div>
+</div>
+
+<!-- Overlay làm mờ nền -->
+<div class="cart-overlay" id="cart-overlay"></div>
+
+
+
+<!-- Products -->
+<!-- CHON MON SAN -->
+<section id="menu" class="menu-section">
+  <h2>CHON GOI AN</h2>
+  <div class="menu-grid">
+    <div class="menu-item">
+      <img src="images/thuymy22.png" alt="Gói tuần 7 ngày FULL TRƯA">
+      <h3>Gói tuần 7 ngày FULL TRƯA</h3>
+      <p>445.000</p>
+      <button class="add-to-cart" 
+              data-name="Gói tuần 7 ngày FULL TRƯA" 
+              data-price="445000" 
+              data-image="images/ganuong.png">
+        Thêm vào giỏ
+      </button>
+    </div>
+
+    <div class="menu-item">
+      <img src="images/thuymy23.png" alt="Gói tuần 7 ngày FULL TỐI">
+      <h3>Gói tuần 7 ngày FULL TỐI</h3>
+      <p>445.000₫</p>
+      <button class="add-to-cart" 
+              data-name="Gói tuần 7 ngày FULL TỐI" 
+              data-price="445000"
+              data-image="images/ganuong.png">
+        Thêm vào giỏ
+      </button>
+    </div>
+
+    <div class="menu-item">
+      <img src="images/thuymy24.png" alt="Gói tuần 7 ngày FULL TRƯA & TỐI">
+      <h3>Gói tuần 7 ngày FULL TRƯA & TỐI</h3>
+      <p>890.000₫</p>
+      <button class="add-to-cart" 
+              data-name="Gói tuần 7 ngày FULL TRƯA & TỐI" 
+              data-price="890000"
+              data-image="images/ganuong.png">
+        Thêm vào giỏ
+      </button>
+    </div>
+
+    <div class="menu-item">
+      <img src="images/thuymy25.png" alt="Gói tháng FULL TRƯA">
+      <h3>Gói tháng FULL TRƯA</h3>
+      <p>1.935.000đ</p>
+      <button class="add-to-cart" 
+              data-name="Gói tháng FULL TRƯA" 
+              data-price="1935000"
+              data-image="images/ganuong.png">
+        Thêm vào giỏ
+      </button>
+    </div>
+
+    <div class="menu-item">
+      <img src="images/thuymy27.png" alt="Gói tháng FULL TỐI">
+      <h3>Gói tháng FULL TỐI</h3>
+      <p>1.935.000₫</p>
+      <button class="add-to-cart" 
+              data-name="Gói tháng FULL TỐI" 
+              data-price="1935000"
+              data-image="images/ganuong.png">
+        Thêm vào giỏ
+      </button>
+    </div>
+
+    <div class="menu-item">
+      <img src="images/thuymy28.png" alt="Gói tháng FULL TRƯA & TỐI">
+      <h3>Gói tháng FULL TRƯA & TỐI</h3>
+      <p>3.875.000₫</p>
+      <button class="add-to-cart" 
+              data-name="Gói tháng FULL TRƯA & TỐI" 
+              data-price="3875000"
+              data-image="images/ganuong.png">
+        Thêm vào giỏ
+      </button>
+    </div>
+  </div>
+</section>
+
+
+  <!-- Footer -->
+ <footer class="footer">
+  <div class="footer-container">
+    
+    <!-- Cột 1: Thông tin công ty -->
+    <div class="footer-col">
+      <h3>CÔNG TY TNHH FITZY</h3>
+      <p><strong>Địa chỉ:</strong> 245 Lê Thanh Nghị- Hải Châu- TP.Đà Nẵng</p>
+      <p><strong>Điện thoại:</strong> (+84) 542986426 [hotline]</p>
+      <p><strong>Email:</strong> info@fitzy.vn <br> For business inquiries: business@fitzy.vn</p>
+      <p><strong>MST:</strong> 0313272749 do Sở Kế hoạch và Đầu tư Đà Nẵng cấp ngày 26/11/2025</p>
+    </div>
+
+    <!-- Cột 2: Điều khoản -->
+    <div class="footer-col">
+      <h3>ĐIỀU KHOẢN CHUNG</h3>
+      <ul>
+        <li><a href="#">Chính Sách Quy Định Chung</a></li>
+        <li><a href="#">Quy Định Hình Thức Thanh Toán</a></li>
+        <li><a href="#">Chính Sách Vận Chuyển Giao Hàng</a></li>
+        <li><a href="#">Chính Sách Bảo Mật Thông Tin</a></li>
+      </ul>
+    </div>
+
+    <!-- Cột 3: Mạng xã hội -->
+    <div class="footer-col">
+      <h3>THEO DÕI CHÚNG TÔI TẠI</h3>
+      <div class="socials">
+        <a href="#https://www.facebook.com/share/17VrRNrhgK/?mibextid=wwXIfr><i class="fab fa-facebook"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-youtube"></i></a>
+      </div>
+      <img src="images/bct.png" alt="Đã thông báo Bộ Công Thương" class="gov-badge">
+    </div>
+  </div>
+
+  <!-- Thanh tìm kiếm -->
+  <div class="footer-search">
+    <input type="text" placeholder="Tìm kiếm">
+    <button><i class="fas fa-search"></i></button>
+  </div>
+</footer>
+<!-- Nút nổi tin nhắn -->
+<div class="chat-widget">
+  <div class="chat-toggle">
+    <i class="fas fa-comments"></i>
+  </div>
+  <div class="chat-options">
+    <a href="https://m.me/fitzy" target="_blank" class="chat-btn messenger">
+      <i class="fab fa-facebook-messenger"></i> Messenger
+    </a>
+    <a href="https://zalo.me/0815215375" target="_blank" class="chat-btn zalo">
+      <img src="icons/zalo.png" alt="Zalo Icon"> Zalo
+    </a>
+  </div>
+</div>
+
+
+<script>
+const toggle = document.querySelector(".chat-toggle");
+const options = document.querySelector(".chat-options");
+
+toggle.addEventListener("click", () => {
+  const isVisible = options.style.display === "flex";
+  options.style.display = isVisible ? "none" : "flex";
+});
+</script>
+
+
+  <script src="script.js"></script>
+  <script src="cart.js"></script>
+</body>
+</html>

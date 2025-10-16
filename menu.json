@@ -1,0 +1,178 @@
+{
+  "week1": [
+    {
+      "day": "T2",
+      "date": "20.10",
+      "lunch": { "title": "Ức gà nướng mật ong + cơm gạo lứt + rau củ hấp", "kcal": "500 Kcal | 70.000" },
+      "dinner": { "title": "Cá hồi áp chảo + salad trộn dầu olive", "kcal": "520 Kcal | 78.000" }
+    },
+    {
+      "day": "T3",
+      "date": "21.10",
+      "lunch": { "title": "SThịt bò xào ớt chuông + khoai lang + trứng luộc", "kcal": "510 Kcal | 75.000" },
+      "dinner": { "title": "GĐậu phụ sốt chanh dây + cơm lứt + canh rau", "kcal": "480 Kcal | 68.000" }
+    },
+    {
+      "day": "T4",
+      "date": "22.10",
+      "lunch": { "title": "Cá thu nướng + cơm gạo lứt + bí xanh luộc", "kcal": "520 Kcal | 72.000" },
+      "dinner": { "title": "Gà viên sốt cam + salad thanh long", "kcal": "490 Kcal | 70.000" }
+    },
+    {
+      "day": "T5",
+      "date": "23.10",
+      "lunch": { "title": "Thịt heo nạc rim tiêu + rau củ hấp + cơm lứt", "kcal": "530 Kcal | 68.000", "new": true },
+      "dinner": { "title": "Trứng hấp nấm + khoai lang nghiền + salad", "kcal": "470 Kcal | 65.000" }
+    },
+    {
+      "day": "T6",
+      "date": "24.10",
+      "lunch": { "title": "Gà áp chảo + nui nguyên cám + salad cà chua", "kcal": "540 Kcal | 75.000", "new": true },
+      "dinner": { "title": "Tôm hấp + khoai lang nướng + bông cải xanh", "kcal": "520 Kcal | 78.000" }
+    },
+    {
+      "day": "T7",
+      "date": "25.10",
+      "lunch": { "title": "Cá basa sốt cam + cơm lứt + cải thìa xào tỏi", "kcal": "500 Kcal | 68.000", "new": true },
+      "dinner": { "title": "Ức gà áp chảo + bắp luộc + salad bơ", "kcal": "520 Kcal | 70.000" }
+    },
+    {
+      "day": "Chủ nhật",
+      "date": "26.10",
+      "lunch": { "title": "Thịt bò áp chảo + bông cải xanh + cơm gạo lứt", "kcal": "540 Kcal | 75.000", "new": true },
+      "dinner": { "title": "Đậu hũ non xào nấm + canh rau cả", "kcal": "480 Kcal | 68.000" }
+    }
+  ],
+  "week2": [
+    {
+      "day": "T2",
+      "date": "27.10",
+      "lunch": { "title": "Cá hồi nướng + salad bơ + khoai lang", "kcal": "550 Kcal | 78.000" },
+      "dinner": { "title": "Ức gà xé trộn rau củ + cơm lứt", "kcal": "510 Kcal | 70.000" }
+    },
+    {
+      "day": "T3",
+      "date": "28.10",
+      "lunch": { "title": "Gà nướng chanh sả + cơm lứt + bí đỏ hấp", "kcal": "520 Kcal | 70.000", "new": true },
+      "dinner": { "title": "Thịt bò xào măng tây + nui nguyên cám", "kcal": "540 Kcal | 75.000" }
+    },
+    {
+      "day": "T4",
+      "date": "29.10",
+      "lunch": { "title": "Cơm lứt + đậu phụ sốt cà + rau củ luộc", "kcal": "480 Kcal | 65.000" },
+      "dinner": { "title": "Cá thu hấp gừng + bắp luộc + salad", "kcal": "500 Kcal | 70.000", "new": true }
+    },
+    {
+      "day": "T5",
+      "date": "30.10",
+      "lunch": { "title": "Ức gà nướng tiêu đen + khoai lang + salad", "kcal": "540 Kcal | 75.000" },
+      "dinner": { "title": "Tôm rim nước dừa + cơm lứt + rau củ", "kcal": "520 Kcal | 78.000" }
+    },
+    {
+      "day": "T6",
+      "date": "31.10",
+      "lunch": { "title": "Bò cuộn nấm kim châm + cơm lứt", "kcal": "530 Kcal | 72.000", "new": true },
+      "dinner": { "title": "Đậu phụ chiên mè + canh bí đỏ + rau củ luộc", "kcal": "480 Kcal | 68.000" }
+    },
+    {
+      "day": "T7",
+      "date": "01.11",
+      "lunch": { "title": "Cá basa áp chảo + khoai lang + salad rau trộn", "kcal": "510 Kcal | 70.000" },
+      "dinner": { "title": "Gà nướng mật ong + cơm gạo lứt", "kcal": "530 Kcal | 75.000" }
+    },
+    {
+      "day": "chủ nhật",
+      "date": "02.11",
+      "lunch": { "title": "Gà luộc xé + cơm lứt + canh cải", "kcal": "490 Kcal | 68.000", "new": true },
+      "dinner": { "title": "Cá hồi nướng tỏi + salad trộn", "kcal": "550 Kcal | 78.000" }
+    }
+  ],
+  "week3": [
+    {
+      "day": "T2",
+      "date": "03.11",
+      "lunch": { "title": "Trứng luộc + cơm lứt + rau củ xào", "kcal": "460 Kcal | 65.000" },
+      "dinner": { "title": "Gà áp chảo + bí đỏ nghiền + salad dưa leo", "kcal": "500 Kcal | 70.000" }
+    },
+    {
+      "day": "T3",
+      "date": "04.11",
+      "lunch": { "title": "Tôm hấp sả + khoai lang + salad dưa chuột", "kcal": "520 Kcal | 72.000" },
+      "dinner": { "title": "Thịt bò nướng tỏi + cơm lứt", "kcal": "530 Kcal | 75.000" }
+    },
+    {
+      "day": "T4",
+      "date": "05.11",
+      "lunch": { "title": "Ức gà nướng phô mai + rau củ + cơm lứt", "kcal": "540 Kcal | 75.000" },
+      "dinner": { "title": "Cá basa sốt chanh + khoai lang nướng", "kcal": "510 Kcal | 70.000" }
+    },
+    {
+      "day": "T5",
+      "date": "06.11",
+      "lunch": { "title": "Đậu hũ hấp nấm + cơm gạo lứt + rau luộc", "kcal": "480 Kcal | 68.000", "new": true },
+      "dinner": { "title": "Gà áp chảo sốt cam + salad trái cây", "kcal": "500 Kcal | 70.000" }
+    },
+    {
+      "day": "T6",
+      "date": "07.11",
+      "lunch": { "title": "Cá hồi áp chảo + nui nguyên cám + bông cải", "kcal": "550 Kcal | 78.000", "new": true },
+      "dinner": { "title": "Thịt heo nạc xào rau củ + cơm lứt", "kcal": "520 Kcal | 70.000" }
+    },
+    {
+      "day": "T7",
+      "date": "08.11",
+      "lunch": { "title": "Gà nướng mè đen + khoai lang + salad", "kcal": "530 Kcal | 72.000", "new": true },
+      "dinner": { "title": "Tôm xào bông cải + cơm gạo lứt", "kcal": "520 Kcal | 75.000" }
+    },
+    {
+      "day": "Chủ nhật",
+      "date": "09.11",
+      "lunch": { "title": "Thịt bò sốt tiêu đen + cơm lứt + rau luộc", "kcal": "540 Kcal | 75.000", "new": true },
+      "dinner": { "title": "Đậu phụ kho nấm + canh bí xanh", "kcal": "480 Kcal | 68.000" }
+    }
+  ],
+  "week4": [
+    {
+      "day": "T2",
+      "date": "10.11",
+      "lunch": { "title": "Cá basa nướng lá chanh + khoai lang + salad", "kcal": "520 Kcal | 70.000" },
+      "dinner": { "title": "Ức gà sốt sữa chua + cơm gạo lứt", "kcal": "530 Kcal | 75.000" }
+    },
+    {
+      "day": "T3",
+      "date": "11.11",
+      "lunch": { "title": "Tôm nướng bơ tỏi + cơm lứt + bắp luộc", "kcal": "540 Kcal | 75.000", "new": true },
+      "dinner": { "title": "Cá hồi sốt chanh dây + salad trộn", "kcal": "550 Kcal | 78.000" }
+    },
+    {
+      "day": "T4",
+      "date": "12.11",
+      "lunch": { "title": "Đậu phụ om rau củ + cơm gạo lứt", "kcal": "480 Kcal | 65.000" },
+      "dinner": { "title": "Gà áp chảo + khoai lang nghiền", "kcal": "500 Kcal | 70.000", "new": true }
+    },
+    {
+      "day": "T5",
+      "date": "13.11",
+      "lunch": { "title": "Gà sốt cam + khoai lang + salad cà rốt", "kcal": "530 Kcal | 72.000" },
+      "dinner": { "title": "Tôm hấp gừng + cơm lứt", "kcal": "510 Kcal | 70.000" }
+    },
+    {
+      "day": "T6",
+      "date": "14.11",
+      "lunch": { "title": "Cá hồi áp chảo + bí đỏ nghiền + salad bơ", "kcal": "530 Kcal | 72.000", "new": true },
+      "dinner": { "title": "Gà nướng tỏi ớt + rau củ luộc", "kcal": "480 Kcal | 68.000" }
+    },
+    {
+      "day": "T7",
+      "date": "15.11",
+      "lunch": { "title": "Thịt heo nạc luộc + cơm lứt + rau củ", "kcal": "510 Kcal | 70.000" },
+      "dinner": { "title": "Cá basa sốt cà chua + salad dưa leo", "kcal": "530 Kcal | 75.000" }
+    },
+    {
+      "day": "chủ nhật",
+      "date": "16.11",
+      "lunch": { "title": "Tôm rim nhạt + cơm lứt + bông cải", "kcal": "490 Kcal | 68.000", "new": true },
+      "dinner": { "title": "Ức gà áp chảo + khoai lang nướng + salad", "kcal": "530 Kcal | 75.000" }
+    }
+  ]
+}
